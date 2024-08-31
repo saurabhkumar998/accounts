@@ -11,7 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
 
-//@ControllerAdvice  -- these are applicable for all types of Controllers which returns REST SOAP or a HTML View
+//@ControllerAdvice  -- this is applicable for all types of Controllers which returns REST SOAP or a HTML View
 @RestControllerAdvice   // -- this is only applicable for REST Controllers ->@RestControllerAdvice = @ControllerAdvice + @ResponseBody
 public class GlobalExceptionHandler {
 	@ExceptionHandler(CustomerAlreadyExistsException.class)
