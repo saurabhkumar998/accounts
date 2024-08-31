@@ -1,10 +1,13 @@
 package com.bank.accounts.service.impl;
 
 import com.bank.accounts.constants.AccountsConstants;
+import com.bank.accounts.dto.AccountsDto;
 import com.bank.accounts.dto.CustomerDto;
 import com.bank.accounts.entity.Accounts;
 import com.bank.accounts.entity.Customer;
 import com.bank.accounts.exception.CustomerAlreadyExistsException;
+import com.bank.accounts.exception.ResourceNotFoundException;
+import com.bank.accounts.mapper.AccountsMapper;
 import com.bank.accounts.mapper.CustomerMapper;
 import com.bank.accounts.repository.AccountsRepository;
 import com.bank.accounts.repository.CustomerRepository;
@@ -55,6 +58,18 @@ public class AccountsServiceImpl implements AccountsService {
 		newAccount.setCreatedBy("Anonymous");
 		newAccount.setCreatedAt(LocalDateTime.now());
 		return newAccount;
+	}
+
+	@Override
+	public CustomerDto fetchAccount(String mobileNumber) {
+		Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(() -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber));
+
+		Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
+				() -> new ResourceNotFoundException("Account", "CustomerId", customer.getCustomerId().toString()));
+
+		CustomerDto customerDto = CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+		customerDto.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountsDto()));
+		return customerDto;
 	}
 
 }

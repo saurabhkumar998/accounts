@@ -1,5 +1,6 @@
 package com.bank.accounts.exception;
 
+import com.bank.accounts.constants.AccountsConstants;
 import com.bank.accounts.dto.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +28,17 @@ public class GlobalExceptionHandler {
 				LocalDateTime.now()
 		);
 		return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(ResourceNotFoundException exception, WebRequest webRequest) {
+		ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+				webRequest.getDescription(false),
+				HttpStatus.NOT_FOUND,
+				exception.getMessage(),
+				LocalDateTime.now()
+		);
+
+		return new ResponseEntity<>(errorResponseDto, HttpStatus.NOT_FOUND);
 	}
 }
