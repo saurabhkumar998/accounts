@@ -7,6 +7,12 @@ import com.bank.accounts.dto.ErrorResponseDto;
 import com.bank.accounts.dto.ResponseDto;
 import com.bank.accounts.exception.CustomerAlreadyExistsException;
 import com.bank.accounts.service.AccountsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpStatus;
@@ -21,6 +27,10 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
+@Tag(
+		name = "CRUD REST APIs for Accounts",
+		description = "CRUD REST APIs to create/fetch/update/delete Account details"
+)
 public class AccountsController {
 
 	private AccountsService accountsService;
@@ -30,6 +40,30 @@ public class AccountsController {
 		this.accountsService = accountsService;
 	}
 
+	@Operation(
+			summary = "Create Account REST API",
+			description = "REST API to create new Customer & Account for Bank"
+	)
+	@ApiResponses({
+			@ApiResponse(
+					responseCode = "201",
+					description = "HTTP Status Created"
+			),
+			@ApiResponse(
+					responseCode = "400",
+					description = "HTTP Status Bad Request",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = ErrorResponseDto.class))
+			),
+			@ApiResponse(
+					responseCode = "500",
+					description = "HTTP Status Internal Server Error",
+					content = @Content(
+							schema = @Schema(implementation = ErrorResponseDto.class)
+					)
+			)
+}
+	)
 	@PostMapping("/create")
 	public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody CustomerDto customerDto) {
 		accountsService.createAccount(customerDto);
@@ -37,6 +71,24 @@ public class AccountsController {
 				.body(new ResponseDto(AccountsConstants.STATUS_201, AccountsConstants.MESSAGE_201));
 	}
 
+	@Operation(
+			summary = "Fetch Account Details REST API",
+			description = "REST API to fetch Customer &  Account details based on the mobile number"
+	)
+	@ApiResponses({
+			@ApiResponse(
+					responseCode = "200",
+					description = "HTTP Status OK"
+			),
+			@ApiResponse(
+					responseCode = "500",
+					description = "HTTP Status Internal Server Error",
+					content = @Content(
+							schema = @Schema(implementation = ErrorResponseDto.class)
+					)
+			)
+	}
+	)
 	@GetMapping("/fetch")
 	public ResponseEntity<CustomerDto> fetchAccountDetails(
 											@RequestParam
@@ -48,6 +100,24 @@ public class AccountsController {
 		return ResponseEntity.ok().body(customerDto);
 	}
 
+	@Operation(
+			summary = "Update Account Details REST API",
+			description = "REST API to update Customer &  Account details based on a account number"
+	)
+	@ApiResponses({
+			@ApiResponse(
+					responseCode = "200",
+					description = "HTTP Status OK"
+			),
+			@ApiResponse(
+					responseCode = "500",
+					description = "HTTP Status Internal Server Error",
+					content = @Content(
+							schema = @Schema(implementation = ErrorResponseDto.class)
+					)
+			)
+	}
+	)
 	@PutMapping("/update")
 	public ResponseEntity<ResponseDto> updateAccountDetails(@Valid @RequestBody CustomerDto customerDto) {
 		boolean isUpdated = accountsService.updateAccount(customerDto);
@@ -60,6 +130,25 @@ public class AccountsController {
 		}
 	}
 
+
+	@Operation(
+			summary = "Delete Account & Customer Details REST API",
+			description = "REST API to delete Customer &  Account details based on a mobile number"
+	)
+	@ApiResponses({
+			@ApiResponse(
+					responseCode = "200",
+					description = "HTTP Status OK"
+			),
+			@ApiResponse(
+					responseCode = "500",
+					description = "HTTP Status Internal Server Error",
+					content = @Content(
+							schema = @Schema(implementation = ErrorResponseDto.class)
+					)
+			)
+	}
+	)
 	@DeleteMapping("/delete")
 	public ResponseEntity<ResponseDto> deleteAccountsDetails(
 										@RequestParam
