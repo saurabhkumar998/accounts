@@ -13,8 +13,7 @@ import org.hibernate.annotations.GenericGenerator;
 //@Table(name = "customer")  -- this is redundant as it will create the table name with the class's name in lowercase i.e. customer
 public class Customer extends BaseEntity {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-	@GenericGenerator(name = "generic", strategy = "generic")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "customer_id")
 	private Long customerId;
 	private String name;

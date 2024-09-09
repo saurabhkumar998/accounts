@@ -17,9 +17,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
@@ -90,10 +92,21 @@ public class AccountsController {
 	}
 	)
 	@GetMapping("/fetch")
-	public ResponseEntity<CustomerDto> fetchAccountDetails(
-											@RequestParam
+	public ResponseEntity<CustomerDto> fetchAccountDetailsWithRequestParam(
+											@RequestParam("mobileNumber") // we can ignore ("mobileNumber") but the parameter name should match the parameter variable name
 											@Pattern(regexp = "^$|[0-9]{10}", message = "mobileNumber must be 10 digits")
 											String mobileNumber) {
+		CustomerDto customerDto = accountsService.fetchAccount(mobileNumber);
+
+		//return ResponseEntity.status(HttpStatus.OK).body(customerDto);
+		return ResponseEntity.ok().body(customerDto);
+	}
+
+	@GetMapping("/fetch/{mobileNumber}")
+	public ResponseEntity<CustomerDto> fetchAccountDetailsWithPathVariable(
+			@PathVariable("mobileNumber") // we can ignore this if the {mobileNumber} is same as the variable name mobileNumber
+			@Pattern(regexp = "^$|[0-9]{10}", message = "mobileNumber must be 10 digits")
+			String mobileNumber) {
 		CustomerDto customerDto = accountsService.fetchAccount(mobileNumber);
 
 		//return ResponseEntity.status(HttpStatus.OK).body(customerDto);
@@ -150,10 +163,26 @@ public class AccountsController {
 	}
 	)
 	@DeleteMapping("/delete")
-	public ResponseEntity<ResponseDto> deleteAccountsDetails(
+	public ResponseEntity<ResponseDto> deleteAccountsDetailsUsingRequestParam(
 										@RequestParam
 										@Pattern(regexp = "^$|[0-9]{10}", message = "mobileNumber must be 10 digits")
 										String mobileNumber) {
+		boolean isDeleted = accountsService.deleteAccount(mobileNumber);
+		if(isDeleted) {
+			return ResponseEntity.ok()
+					.body(new ResponseDto(AccountsConstants.STATUS_200, AccountsConstants.MESSAGE_200));
+		}else {
+			return ResponseEntity.internalServerError()
+					.body(new ResponseDto(AccountsConstants.STATUS_500, AccountsConstants.MESSAGE_500));
+		}
+
+	}
+
+	@DeleteMapping("/delete/{mobileNumber}")
+	public ResponseEntity<ResponseDto> deleteAccountsDetailsUsingPathVariable(
+			@PathVariable("mobileNumber")
+			@Pattern(regexp = "^$|[0-9]{10}", message = "mobileNumber must be 10 digits")
+			String mobileNumber) {
 		boolean isDeleted = accountsService.deleteAccount(mobileNumber);
 		if(isDeleted) {
 			return ResponseEntity.ok()
