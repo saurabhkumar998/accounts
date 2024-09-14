@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -34,8 +35,9 @@ import java.time.LocalDateTime;
 		description = "CRUD REST APIs to create/fetch/update/delete Account details"
 )
 public class AccountsController {
-
-	private AccountsService accountsService;
+	private final AccountsService accountsService;
+	@Value("${build.version}")
+	private String buildVersion;
 
 	// we are doing constructor injection, which is the recommended approach over @Autowired annotation
 	public AccountsController(AccountsService accountsService) {
@@ -192,6 +194,30 @@ public class AccountsController {
 					.body(new ResponseDto(AccountsConstants.STATUS_500, AccountsConstants.MESSAGE_500));
 		}
 
+	}
+
+	@Operation(
+			summary = "Get Build Information",
+			description = "Get Build Information that is deployed into accounts microservice"
+	)
+	@ApiResponses({
+			@ApiResponse(
+					responseCode = "200",
+					description = "HTTP Status OK"
+			),
+			@ApiResponse(
+					responseCode = "500",
+					description = "HTTP Status Internal Server Error",
+					content = @Content(
+							schema = @Schema(implementation = ErrorResponseDto.class)
+					)
+			)
+	})
+	@GetMapping("/build-info")
+	public ResponseEntity<String> getBuildInfo() {
+		return ResponseEntity.
+				status(HttpStatus.OK)
+				.body(buildVersion);
 	}
 
 }
