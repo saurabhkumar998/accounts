@@ -1,5 +1,6 @@
 package com.bank.accounts;
 
+import com.bank.accounts.dto.AccountsContactInfoDto;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.extensions.Extension;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
@@ -45,6 +47,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 		servers = @Server(),
 		tags = @Tag(name = "Accounts")
 )
+@EnableConfigurationProperties(value = AccountsContactInfoDto.class)
 public class AccountsApplication {
 
 	public static void main(String[] args) {

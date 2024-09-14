@@ -1,10 +1,7 @@
 package com.bank.accounts.controller;
 
 import com.bank.accounts.constants.AccountsConstants;
-import com.bank.accounts.dto.AccountsDto;
-import com.bank.accounts.dto.CustomerDto;
-import com.bank.accounts.dto.ErrorResponseDto;
-import com.bank.accounts.dto.ResponseDto;
+import com.bank.accounts.dto.*;
 import com.bank.accounts.exception.CustomerAlreadyExistsException;
 import com.bank.accounts.service.AccountsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,6 +41,9 @@ public class AccountsController {
 
 	@Autowired
 	private Environment environment;
+
+	@Autowired
+	private AccountsContactInfoDto accountsContactInfoDto;
 
 	// we are doing constructor injection, which is the recommended approach over @Autowired annotation
 	public AccountsController(AccountsService accountsService) {
@@ -249,6 +249,30 @@ public class AccountsController {
 				status(HttpStatus.OK)
 				//.body(environment.getProperty("JAVA_HOME"));
 				.body(environment.getProperty("java.version"));
+	}
+
+	@Operation(
+			summary = "Get Contact Info",
+			description = "Get Contact Info that can be reached in case of any issues"
+	)
+	@ApiResponses({
+			@ApiResponse(
+					responseCode = "200",
+					description = "HTTP Status OK"
+			),
+			@ApiResponse(
+					responseCode = "500",
+					description = "HTTP Status Internal Server Error",
+					content = @Content(
+							schema = @Schema(implementation = ErrorResponseDto.class)
+					)
+			)
+	})
+	@GetMapping("/contact-info")
+		public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+		return ResponseEntity.
+				status(HttpStatus.OK)
+				.body(accountsContactInfoDto);
 	}
 
 }
