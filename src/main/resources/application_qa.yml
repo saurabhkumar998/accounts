@@ -3,6 +3,7 @@ spring:
     activate:
       on-profile: "qa"
 
+
 build:
   version: "2.0"
 
