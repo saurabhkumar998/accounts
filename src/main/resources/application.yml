@@ -3,7 +3,9 @@ server:
 
 logging:
   level:
-    root: DEBUG
+    com:
+      bank:
+        accounts: DEBUG
 
 spring:
   application:
